@@ -1,7 +1,7 @@
 name: GitHub Classroom Workflow
 on:
   push:
-    branches: [ master , dev ]
+    branches: [ master ]
 jobs:
   build:
     name: Autograding
@@ -15,16 +15,20 @@ jobs:
 
       # TODO build, publish to docker hub, deploy to k8s
 
-      - name: Build, publish
-        env:
-          DOCKER_USER: ${{secrets.DOCKERHUB_USERNAME}}
-          DOCKER_PASSWORD: ${{secrets.DOCKERHUB_PASSWORD}}
-        run: |
-          docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
-          docker build --no-cache -t mvgorshkoff/gateway ./library_system/gateway/ && docker push mvgorshkoff/gateway:latest
-          docker build --no-cache -t mvgorshkoff/ratingsystem ./library_system/rating_system/ && docker push mvgorshkoff/ratingsystem:latest
-          docker build --no-cache -t mvgorshkoff/librarysystem ./library_system/library_system/ && docker push mvgorshkoff/librarysystem:latest
-          docker build --no-cache -t mvgorshkoff/reservationsystem ./library_system/reservation_system/ && docker push mvgorshkoff/reservationsystem:latest
+      # - name: Build, publish
+      #   env:
+      #     DOCKER_USER: ${{secrets.DOCKERHUB_USERNAME}}
+      #     DOCKER_PASSWORD: ${{secrets.DOCKERHUB_PASSWORD}}
+      #   run: |
+      #     docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+      #     docker build --no-cache -t mvgorshkoff/gateway ./library_system/gateway/
+      #     docker push mvgorshkoff/gateway:latest
+      #     docker build --no-cache -t mvgorshkoff/ratingsystem ./library_system/rating_system/
+      #     docker push mvgorshkoff/ratingsystem:latest
+      #     docker build --no-cache -t mvgorshkoff/librarysystem ./library_system/library_system/
+      #     docker push mvgorshkoff/librarysystem:latest
+      #     docker build --no-cache -t mvgorshkoff/reservationsystem ./library_system/reservation_system/
+      #     docker push mvgorshkoff/reservationsystem:latest
 
       # - name: Run API Tests
       #   uses: matt-ball/newman-action@master
