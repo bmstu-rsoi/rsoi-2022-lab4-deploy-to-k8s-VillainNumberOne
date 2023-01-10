@@ -2,9 +2,9 @@ import requests
 import json
 from datetime import datetime
 
-LIBRARY_SYSTEM = "http://librarysystem:8060"
-RATING_SYSTEM = "http://ratingsystem:8050"
-RESERVATION_SYSTEM = "http://reservationsystem:8070"
+LIBRARY_SYSTEM = "http://library-service:8060"
+RATING_SYSTEM = "http://rating-service:8050"
+RESERVATION_SYSTEM = "http://reservation-service:8070"
 
 
 def get_city_libraries(city, page=None, size=None):
@@ -227,7 +227,7 @@ def return_book(username, reservation_uid, condition, date):
         data=json.dumps(available_count_data),
     ).status_code
     if status_code != 202:
-        return None, "Unavailable to update available_count"
+        return None, "Unable to update available_count"
     
     # Update book condition
     update_condition_data = {
@@ -239,7 +239,7 @@ def return_book(username, reservation_uid, condition, date):
         data=json.dumps(update_condition_data),
     )
     if update_condition_response.status_code != 202:
-        return None, "Unavailable to update book condition"
+        return None, "Unable to update book condition"
     
     conditions = json.loads(update_condition_response.text)
 
@@ -261,6 +261,6 @@ def return_book(username, reservation_uid, condition, date):
         data=json.dumps(update_stars_data),
     )
     if update_stars_response.status_code != 202:
-        return None, "Unavailable to update user rating"
+        return None, "Unable to update user rating"
 
     return True, None
