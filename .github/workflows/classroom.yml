@@ -1,7 +1,7 @@
 name: GitHub Classroom Workflow
 on:
   push:
-    branches: [ master , dev ]
+    branches: [ master ]
 jobs:
   build:
     name: Autograding
@@ -30,13 +30,28 @@ jobs:
           docker build --no-cache -t mvgorshkoff/reservationsystem ./library_system/reservation_system/
           docker push mvgorshkoff/reservationsystem:latest
 
-      # - name: Run API Tests
-      #   uses: matt-ball/newman-action@master
-      #   with:
-      #     collection: <variant>/postman/collection.json
-      #     environment: <variant>/postman/environment.json
-      #     delayRequest: 100
-      #     reporters: '[ "cli" ]'
+      - name: Deploy to kubernetes
+        timeout-minutes: 5
+        env:
+          SERVER: "${{secrets.OKTETO_SERVER}}"
+          TOKEN: "${{secrets.OKTETO_TOKEN}}"
+          CERTIFICATE: "${{secrets.K8S_CLUSTER_CERT}}"
+        run: |
+          kubectl config set-cluster rsoi-cluster --server=$SERVER
+          kubectl config set-credentials dev --token=$TOKEN
+          kubectl config set clusters.rsoi-cluster.certificate-authority-data $CERTIFICATE
+          kubectl config set-context production --cluster=rsoi-cluster --user=dev --namespace=villainnumberone
+          kubectl config use-context production
+          helm upgrade --install rsoi-lab4 ./kubernetes/library
+          kubectl apply -f ./kubernetes/ingress.yaml
+
+      - name: Run API Tests
+        uses: matt-ball/newman-action@master
+        with:
+          collection: <variant>/postman/collection.json
+          environment: <variant>/postman/environment.json
+          delayRequest: 100
+          reporters: '[ "cli" ]'
 
       # - uses: education/autograding@v1
       #   id: autograder
