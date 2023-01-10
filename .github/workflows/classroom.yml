@@ -1,7 +1,7 @@
 name: GitHub Classroom Workflow
 on:
   push:
-    branches: [ master ]
+    branches: [ master, dev ]
 jobs:
   build:
     name: Autograding
@@ -35,15 +35,20 @@ jobs:
         env:
           SERVER: "${{secrets.OKTETO_SERVER}}"
           TOKEN: "${{secrets.OKTETO_TOKEN}}"
-          CERTIFICATE: "${{secrets.K8S_CLUSTER_CERT}}"
+          CERTIFICATE: "${{secrets.OKTETO_CERTIFICATE}}"
         run: |
-          kubectl config set-cluster rsoi-cluster --server=$SERVER
+          kubectl config set-cluster lab4 --server=$SERVER
           kubectl config set-credentials dev --token=$TOKEN
-          kubectl config set clusters.rsoi-cluster.certificate-authority-data $CERTIFICATE
-          kubectl config set-context production --cluster=rsoi-cluster --user=dev --namespace=villainnumberone
-          kubectl config use-context production
-          helm upgrade --install rsoi-lab4 ./kubernetes/library
+          kubectl config set clusters.lab4.certificate-authority-data $CERTIFICATE
+          kubectl config set-context prod --cluster=lab4 --user=dev --namespace=villainnumberone
+          kubectl config use-context prod
+          helm upgrade --install library ./kubernetes/library
           kubectl apply -f ./kubernetes/ingress.yaml
+
+      - name: Wait 120s
+        uses: jakejarvis/wait-action@master
+        with:
+          time: '120s'
 
       - name: Run API Tests
         uses: matt-ball/newman-action@master
