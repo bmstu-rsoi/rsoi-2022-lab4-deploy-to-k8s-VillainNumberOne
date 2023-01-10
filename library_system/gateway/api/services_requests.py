@@ -4,7 +4,7 @@ from datetime import datetime
 
 LIBRARY_SYSTEM = "http://library-service:8060"
 RATING_SYSTEM = "http://rating-service:8050"
-RESERVATION_SYSTEM = "http://reservation-service:8070"
+RESERVATION_SYSTEM = "http://res-service:8070"
 
 
 def get_city_libraries(city, page=None, size=None):
