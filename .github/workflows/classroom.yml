@@ -30,7 +30,7 @@ jobs:
           docker build --no-cache -t mvgorshkoff/reservationsystem ./library_system/reservation_system/
           docker push mvgorshkoff/reservationsystem:latest
 
-      - name: Deploy to kubernetes
+      - name: Deploy
         timeout-minutes: 5
         env:
           SERVER: "${{secrets.OKTETO_SERVER}}"
@@ -53,8 +53,8 @@ jobs:
       - name: Run API Tests
         uses: matt-ball/newman-action@master
         with:
-          collection: <variant>/postman/collection.json
-          environment: <variant>/postman/environment.json
+          collection: v4/postman/collection.json
+          environment: v4/postman/environment.json
           delayRequest: 100
           reporters: '[ "cli" ]'
 
